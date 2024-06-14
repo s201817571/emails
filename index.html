@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #212121;
+        }
+        .email-container {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .email-text {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-right: 10px;
+        }
+        .copy-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: white;
+        }
+        .copy-icon:hover {
+            fill: #4CAF50;
+        }
+        h1 {
+            display: block;
+            font-size: 2em;
+            color: white;
+            margin-block-start: 0.67em;
+            margin-block-end: 0.67em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-weight: bold;
+            unicode-bidi: isolate;
+        }
+        input[type="text" i] {
+            padding-block: 1px;
+            padding-inline: 2px;
+            color: blue;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Email List</h1>
+    <div id="email-list">
+        <!-- Email containers will be appended here by JavaScript -->
+    </div>
+
+    <script>
+        const emailList = document.getElementById('email-list');
+
+        // Fetch emails from remote JSON file
+        fetch('https://raw.githubusercontent.com/spacetoonlinks/hosting/main/myemail.json')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(email => {
+                    const emailContainer = document.createElement('div');
+                    emailContainer.className = 'email-container';
+
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'text';
+                    emailInput.className = 'email-text';
+                    emailInput.value = email;
+                    emailInput.readOnly = true;
+
+                    const copyIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    copyIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    copyIcon.setAttribute('width', '24');
+                    copyIcon.setAttribute('height', '24');
+                    copyIcon.setAttribute('fill', 'none');
+                    copyIcon.setAttribute('viewBox', '0 0 24 24');
+                    copyIcon.classList.add('copy-icon');
+                    copyIcon.innerHTML = '<path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path>';
+
+                    copyIcon.addEventListener('click', () => copyToClipboard(email));
+
+                    emailContainer.appendChild(emailInput);
+                    emailContainer.appendChild(copyIcon);
+
+                    emailList.appendChild(emailContainer);
+                });
+            })
+            .catch(error => console.error('Error fetching emails:', error));
+
+        function copyToClipboard(email) {
+            // Create a temporary input element
+            const tempInput = document.createElement('input');
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+
+            // Select the input value and copy it to the clipboard
+            tempInput.select();
+            document.execCommand('copy');
+
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
+
+            // Notify the user
+            alert('Copied: ' + email);
+        }
+    </script>
+</body>
+</html>
